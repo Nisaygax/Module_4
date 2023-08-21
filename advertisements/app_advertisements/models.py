@@ -38,7 +38,7 @@ class Advertisement(models.Model):
             return format_html('<span style = "color:blue; font-weight:bold"> Сегодня в {} </span>', updated_time)
         return self.updated_at.strftime('%d.%m.%Y в %H:%M:%S')
     
-    @admin.display()
+    @admin.display(description='фото')
     def admin_image(self):
         if self.image:
-            return format_html('<img src="{{self.image.url}}" width="75" height="75" />')
+            return format_html('<img src = {url} style = "max-width: 100px; max-height: 100px />', url = self.image.url)
