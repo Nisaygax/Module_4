@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
 # Create your models here.
 
@@ -23,6 +24,9 @@ class Advertisement(models.Model):
 
     def __str__(self):
         return f'Advertisement(id = {self.id}, title = {self.title}, price = {self.price})'
+    
+    def get_absolute_url(self):
+        return reverse('adv-detail', kwargs = {'pk': self.pk})
     
     @admin.display(description='Дата создания')
     def created_date(self):

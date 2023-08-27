@@ -1,18 +1,35 @@
 from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
+from django.contrib.auth import get_user_model
+from django.db.models import Count
 from .models import Advertisement
 from .forms import AdvertisementForm
 
 def index(request):
-    advertisements = Advertisement.objects.all()
-    context = {'advertisements': advertisements}
-    return render(request, 'index.html', context)
+    title = request.GET.get('query')
+    if title:
+        advertisements = Advertisement.objects.filter(title__icontains = title)
+    else:
+        advertisements = Advertisement.objects.all()
+
+    context = {
+        'advertisements': advertisements,
+        'title': title
+        }
+    
+    return render(request, 'app_advertisements/index.html', context)
 
 
+User = get_user_model()
 def top_sellers(request):
-    return render(request, 'top-sellers.html')
+    users = User.objects.annotate(adv_count = Count('advertisement')).order_by('-adv_count')
+    context = {'users': users}
+    return render(request, 'app_advertisements/top-sellers.html', context)
 
 
+@login_required(login_url=reverse_lazy('login'))
 def advertisement_post(request):
     if request.method == "POST":
         form = AdvertisementForm(request.POST, request.FILES)
@@ -24,18 +41,14 @@ def advertisement_post(request):
             return redirect(url)
     else:
         form = AdvertisementForm()
-    context = {'form':form}
-    
-    return render(request, 'advertisement-post.html', context)
+
+    context = {'form': form}
+    return render(request, 'app_advertisements/advertisement-post.html', context)
 
 
-def register(request):
-    return render(request, 'register.html')
-
-
-def login(request):
-    return render(request, 'login.html')
-
-
-def profile(request):
-    return render(request, 'profile.html')
+def advertisement_detail(request, pk):
+    advertisement = Advertisement.objects.get(id = pk)
+    context = {
+        'advertisement': advertisement
+    }
+    return render(request, 'app_advertisements/advertisement.html', context)

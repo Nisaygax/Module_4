@@ -1,8 +1,7 @@
 from django.contrib import admin
+from .models import Advertisement
 
 # Register your models here.
-
-from .models import Advertisement
 
 class Advertisement_Admin(admin.ModelAdmin):
     list_display = ['id', 'title', 'description', 'created_date', 'updated_date', 'price', 'auction', 'user', 'admin_image']
