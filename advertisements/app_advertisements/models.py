@@ -45,4 +45,4 @@ class Advertisement(models.Model):
     @admin.display(description='фото')
     def admin_image(self):
         if self.image:
-            return format_html('<img src = {url} style = "max-width: 100px; max-height: 100px />', url = self.image.url)
+            return format_html('<img src = {url} style = "max-width: 100px; max-height: 100px"/>', url = self.image.url)
